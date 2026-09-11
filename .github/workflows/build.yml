@@ -74,6 +74,30 @@ jobs:
       # redistribute.", and on a public repo both build artifacts and Releases are
       # publicly downloadable. The only deploy below targets the PRIVATE .minecraft
       # repo for personal mod-pack use, which is not public redistribution.
+      #
+      # ⚠️ The step below (Upload build artifact) was added on request, but it
+      # directly contradicts the note above on a PUBLIC repo: Actions artifacts
+      # are downloadable by anyone with read access to the repo. Keep this step
+      # only if the repo is private, or if you've reconsidered the distribution
+      # policy.
+
+      # ---- Upload the built jar(s) as a workflow artifact ----
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: voxy-neoforge-${{ github.sha }}
+          path: |
+            build/libs/voxy-neoforge-*.jar
+            !build/libs/*-sources.jar
+            !build/libs/*-all.jar
+          retention-days: 14
+          if-no-files-found: error
+
+      # NOTE: The mod jar is intentionally NOT published as a public artifact or
+      # GitHub Release. The license (LICENSE.md) is "All rights reserved. Do not
+      # redistribute.", and on a public repo both build artifacts and Releases are
+      # publicly downloadable. The only deploy below targets the PRIVATE .minecraft
+      # repo for personal mod-pack use, which is not public redistribution.
 
       # ---- Push jar directly to .minecraft repo via SSH deploy key ----
       # Best-effort: this is a personal mod-pack deploy, so a hiccup here (e.g. the
